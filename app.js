@@ -26,10 +26,13 @@ app.post('/login', (req, res) => {
 const signupRoutes = require('./routes/users.js');
 app.use('/signup', signupRoutes);
 
+const postRoutes = require('./routes/posts.js');
+app.use('/posts', postRoutes);  
+
 // app.post('/signup', async (req, res) => {
 //   const { email, username, password, confirmPassword, photo } = req.body;
 //   const message = await createUserController(email, username, password, confirmPassword, photo);
 //   res.json(message);
 // });
 
-app.listen(80);
+app.listen(8080);

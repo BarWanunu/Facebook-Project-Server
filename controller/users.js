@@ -1,5 +1,5 @@
-import { createUser as createUserModel } from '../models/users.js';
-
+const userService = require('../services/users.js');
+const createUserModel = userService.createUser;
 function createUser(email, userName, password,confirmPassword, photo) {
 
     // Check if email is in the correct format
@@ -24,6 +24,10 @@ function createUser(email, userName, password,confirmPassword, photo) {
     if (userName == '') {
         return { success: false, message: 'Please enter a display name' };
     }
+     if (photo== '') {
+        return { success: false, message: 'Please upload a profile picture' };
+            
+        }
     const message= createUserModel(email, userName, password,photo);
     return message
 
@@ -33,4 +37,4 @@ function createUser(email, userName, password,confirmPassword, photo) {
 
 }
 
-export { createUser };
+module.exports = { createUser };

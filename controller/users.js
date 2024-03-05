@@ -1,5 +1,4 @@
 const userService = require('../services/users.js');
-const createUserModel = userService.createUser;
 function createUser(email, userName, password,confirmPassword, photo) {
 
     // Check if email is in the correct format
@@ -28,7 +27,7 @@ function createUser(email, userName, password,confirmPassword, photo) {
         return { success: false, message: 'Please upload a profile picture' };
             
         }
-    const message= createUserModel(email, userName, password,photo);
+    const message= userService.createUser(email, userName, password,photo);
     return message
 
 
@@ -36,5 +35,9 @@ function createUser(email, userName, password,confirmPassword, photo) {
     // Check if password meets the requirements
 
 }
+async function checkUser(username, password) {
+    const message = await userService.checkUser(username, password);
+    return message;
+}
 
-module.exports = { createUser };
+module.exports = { createUser,checkUser };

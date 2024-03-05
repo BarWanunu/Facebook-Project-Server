@@ -15,16 +15,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Route to handle the POST or PATCH request
-app.post('/login', (req, res) => {
-  const { displayName, password } = req.body;
-  if (displayName == 'guest' && password == 'Aa12345678') {
-    res.redirect(302, '/home');
-  } else {
-    return res.status(401).json({ message: 'Invalid username or password' });
-  }
-});
 const signupRoutes = require('./routes/users.js');
 app.use('/signup', signupRoutes);
+
 
 // app.post('/signup', async (req, res) => {
 //   const { email, username, password, confirmPassword, photo } = req.body;

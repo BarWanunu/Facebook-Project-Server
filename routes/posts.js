@@ -3,8 +3,8 @@ const router = express.Router();
 const { createPost: createPostController } = require('../controller/posts.js');
 
 router.post('/create', async (req, res) =>{
-  const { id, text, profile, img, profileImg } = req.body;
-  const message = await createPostController(id, text, profile, img, profileImg);
+  const {  text, token,date,  img,  } = req.body;
+  const message = await createPostController(req, res);
   res.json(message);
 });
 

@@ -29,4 +29,4 @@ app.use('/posts', postRoutes);
 //   res.json(message);
 // });
 
-app.listen(8080);
+app.listen(80);

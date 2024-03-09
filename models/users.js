@@ -22,10 +22,10 @@ const userSchema = new Schema({
         required: true
     },
     
-    // posts: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Post'
-    // }], // Array of post IDs,
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
+    }], // Array of post IDs,
     friends: [String]
 })
 

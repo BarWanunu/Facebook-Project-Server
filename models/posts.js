@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
+  id: {
+    type: Number,
+    required: true,
+    unique: true,
+},
     text:{
       type: String,
       required: true
@@ -16,11 +21,14 @@ const postSchema = new Schema({
     },
     img: {
       type: String,
-      required: true
     },
     profileImg: {
       type: String,
       required: true
+    },
+    likes: {
+      type: Number,
+      default: 0
     }
   })
 

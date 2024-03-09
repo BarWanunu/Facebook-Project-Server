@@ -1,4 +1,5 @@
 const userService = require('../services/users.js');
+const postOptionService = require('../services/post_option.js');
 function createUser(email, userName, password,confirmPassword, photo) {
 
     // Check if email is in the correct format
@@ -39,5 +40,18 @@ async function checkUser(username, password) {
     const message = await userService.checkUser(username, password);
     return message;
 }
+async function deletePost(userId,postId, token) {
+    const message = await userService.deletePost(userId,postId, token);
+    return message;
+}
+async function editPost(userId,postId, token, text) {
+    const message = await userService.editPost(userId,postId, token,text);
+    return message;
+}
+async function likes(userId,postId, token,isliked) {
+    const message = await postOptionService.likes(userId,postId, token,isliked);
+    return message;
+}
 
-module.exports = { createUser,checkUser };
+
+module.exports = { createUser,checkUser,deletePost,editPost,likes };

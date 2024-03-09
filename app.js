@@ -12,16 +12,19 @@ const cors = require('cors');
 app.use(express.static('public'));
 app.use(cors());
 // Middleware to parse JSON data
-app.use(bodyParser.json());
-
+app.use(bodyParser.json({ limit: '10mb' }));
 // Route to handle the POST or PATCH request
 const signupRoutes = require('./routes/users.js');
 app.use('/signup', signupRoutes);
 
-
 const postRoutes = require('./routes/posts.js');
 app.use('/posts', postRoutes);  
 
+const tokenRoutes = require('./routes/token.js');
+app.use('/Token', tokenRoutes);
+
+const userRoutes = require('./routes/users.js');
+app.use('/User', userRoutes);
 
 // app.post('/signup', async (req, res) => {
 //   const { email, username, password, confirmPassword, photo } = req.body;

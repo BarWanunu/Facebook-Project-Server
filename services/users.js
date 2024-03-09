@@ -1,6 +1,8 @@
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const tokenSevice= require('../services/token.js');
+const Post = require('../models/posts');
 async function createUser(emailuser, usernameuser, passworduser, photouser) {
     try {
         console.log('Checking for existing user with username:', usernameuser);
@@ -29,16 +31,55 @@ async function createUser(emailuser, usernameuser, passworduser, photouser) {
 async function checkUser(Username, password){
     const userAccount= await User.findOne({userName:Username});
     if(!userAccount){
-        return { success: false, message: 'Incorrect username or password. Please try again.', token:'' };
+        return { success: false, message: 'Incorrect username or password. Please try again.' };
     }
     if (userAccount.password === password){
-        const token = jwt.sign({ userId: userAccount._id, username: userAccount.userName }, 'yourSecretKey');
-         return { success: true, message: 'Login Success, welcome to Facebook!' , token };
+       
+         return { success: true, message: 'Login Success, welcome to Facebook!' };
     }
     else{
-    return { success: false, message: 'Incorrect username or password. Please try again.' , token:'' };
+    return { success: false, message: 'Incorrect username or password. Please try again.'  };
     }
 }
 
-module.exports = { createUser, checkUser };
+async function deletePost(userId,postId, token){
+    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    
+    const username = await usernamePromise; //
+    if(username!=userId){
+        return { success: false, message: 'Unauthorized access'  };
+    }
+    const post = await Post.findOne({id:postId});
+    if (!post) {
+        return { success: false, message: 'Post not found' };
+      }
+      postrealId=post._id;
+      const user= User.findOne({ userName: username });
+      await User.updateOne({ _id:user.id }, { $pull: { posts: postrealId } });
+      await Post.deleteOne({ id: postId });
+      return { success: true, message: 'Post has been deleted' };
+      // Remove the post ID from the user's posts array
+      
+}
+async function editPost(userId, postId, token, newtext) {
+    const usernamePromise = tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    if (username != userId) {
+      return { success: false, message: 'Unauthorized access' };
+    }
+    const post = await Post.findOne({ id: postId });
+    if (!post) {
+      return { success: false, message: 'Post not found' };
+    }
+    const postrealId = post._id;
+    const user = await User.findOne({ userName: username }).exec();
+  
+
+    await Post.updateOne({ id: postId }, { $set: { text: newtext } });
+  
+    return { success: true, message: 'Post has been edited' };
+    // Remove the post ID from the user's posts array
+  }
+  
+module.exports = { createUser, checkUser,deletePost, editPost  };
 

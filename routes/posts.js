@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { createPost: createPostController } = require('../controller/posts.js');
-
+const controller =require('../controller/posts.js');
 router.post('/create', async (req, res) =>{
-  const { id, text, profile, img, profileImg } = req.body;
-  const message = await createPostController(id, text, profile, img, profileImg);
+  const message = await createPostController(req, res);
+  res.json(message);
+});
+
+router.get('/', async (req, res) =>{
+  const message = await controller.getAllPosts(req, res);
   res.json(message);
 });
 

@@ -62,9 +62,16 @@ async function deleteFriend(token, userId) {
     return message;
 }
 async function getUser(token, userId) {
-    const message = await friendsService.deleteFriend(token,userId);
+    const message = await userService.getUser(token,userId);
     return message;
 }
 
-
-module.exports = { createUser,checkUser,deletePost,editPost,likes,getAllFriends,deleteFriend,getUser };
+async function deleteUser(token, userId) {
+    const message = await userService.deleteUser(token,userId);
+    return message;
+}
+async function editUser(token, userId) {
+    const message = await userService.editUser(token,userId);
+    return message;
+}
+module.exports = { createUser,checkUser,deletePost,editPost,likes,getAllFriends,deleteFriend,getUser,deleteUser,editUser };

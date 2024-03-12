@@ -69,5 +69,17 @@ router.get('/:id',async (req, res) => {
   const message = await userController.getUser(token,userId);
   res.json(message);
 });
-
+router.delete('/:id',async (req, res) => {
+  const userId = req.params.id;
+  const token = req.headers.authorization.split(' ')[1]; // Extract token from Authorization header
+  const message = await userController.deleteUser(token,userId);
+  res.json(message);
+});
+router.patch('/:id',async (req, res) => {
+  const userId = req.params.id;
+  const { editUsername, editedImage} = req.body;
+  const token = req.headers.authorization.split(' ')[1]; // Extract token from Authorization header
+  const message = await userController.editUser(token,editUsername, editedImage);
+  res.json(message);
+});
 module.exports = router;

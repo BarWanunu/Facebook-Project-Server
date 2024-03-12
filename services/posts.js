@@ -55,5 +55,12 @@ async function getAllPosts(){
         return { success: false, message: 'Error fetching posts' };
       }
 }
-
-module.exports = { createPost, getAllPosts };
+async function getPost(postId){
+    try {
+        const post = await Post.findOne({id:postId});
+    return { success: true, post: post };
+    } catch (error) {
+    return { success: false, post:'' };
+  }
+}
+module.exports = { createPost, getAllPosts,getPost };

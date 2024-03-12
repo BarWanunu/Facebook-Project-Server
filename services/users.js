@@ -80,6 +80,28 @@ async function editPost(userId, postId, token, newtext) {
     return { success: true, message: 'Post has been edited' };
     // Remove the post ID from the user's posts array
   }
+
+
+  async function getUser(token){
+    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    if(!username){
+        return { success: false, message: 'User not found' };
+    }
+    const userAccount= await User.findOne({userName:username});
+    return { success: true, message: 'user has been found',user:userAccount };
+  }
   
-module.exports = { createUser, checkUser,deletePost, editPost  };
+  async function deleteUser(token){
+    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    if(!username){
+        return { success: false, message: 'User not found' };
+    }
+    const userAccount= await User.findOne({userName:username});
+    await Post.deleteOne({userName:username});
+    return { success: true, message: 'user has been found',user:userAccount };
+  }
+  
+module.exports = { createUser, checkUser,deletePost, editPost,getUser,deleteUser  };
 

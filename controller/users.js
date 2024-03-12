@@ -1,5 +1,6 @@
 const userService = require('../services/users.js');
 const postOptionService = require('../services/post_option.js');
+const friendsService = require('../services/friends.js');
 function createUser(email, userName, password,confirmPassword, photo) {
 
     // Check if email is in the correct format
@@ -52,6 +53,25 @@ async function likes(userId,postId, token,isliked) {
     const message = await postOptionService.likes(userId,postId, token,isliked);
     return message;
 }
+async function getAllFriends(token, userId) {
+    const message = await friendsService.getAllFriends(token,userId);
+    return message;
+}
+async function deleteFriend(token, userId) {
+    const message = await friendsService.deleteFriend(token,userId);
+    return message;
+}
+async function getUser(token, userId) {
+    const message = await userService.getUser(token,userId);
+    return message;
+}
 
-
-module.exports = { createUser,checkUser,deletePost,editPost,likes };
+async function deleteUser(token, userId) {
+    const message = await userService.deleteUser(token,userId);
+    return message;
+}
+async function editUser(token, userId) {
+    const message = await userService.editUser(token,userId);
+    return message;
+}
+module.exports = { createUser,checkUser,deletePost,editPost,likes,getAllFriends,deleteFriend,getUser,deleteUser,editUser };

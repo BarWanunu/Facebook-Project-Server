@@ -80,6 +80,54 @@ async function editPost(userId, postId, token, newtext) {
     return { success: true, message: 'Post has been edited' };
     // Remove the post ID from the user's posts array
   }
+
+
+  async function getUser(token){
+    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    if(!username){
+        return { success: false, message: 'User not found' };
+    }
+    const userAccount= await User.findOne({userName:username});
+    return { success: true, message: 'user has been found',user:userAccount };
+  }
   
-module.exports = { createUser, checkUser,deletePost, editPost  };
+  async function deleteUser(token){
+    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    if(!username){
+        return { success: false, message: 'User not found' };
+    }
+    const userAccount= await User.findOne({userName:username});
+    if(!userAccount){
+        return { success: false, message: 'User not found' };
+    }
+    await User.deleteOne({userName:username});
+    return { success: true, message: 'user has been found',user:userAccount };
+  }
+
+  async function editUser(token, editUsername, editedImage){
+    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    if(!username){
+        return { success: false, message: 'User not found' };
+    }
+    const userAccount= await User.findOne({userName:username});
+    if(!userAccount){
+        return { success: false, message: 'User not found' };
+    }
+    if(username!=editUsername){
+        const findUser= await User.findOne({userName:editUsername});
+        if(findUser){
+            return { success: false, message: 'Username is already taken' };
+        }
+        await User.updateOne({ username: username }, { $set: { username: editUsername } });
+    }
+    if(editedImage!=''){
+        await User.updateOne({ username: username }, { $set: { photo: editedImage } });
+    }
+   
+    return { success: true, message: 'user has been changed',username:userAccount.userName, profile:userAccount.photo };
+  }
+module.exports = { createUser, checkUser,deletePost, editPost,getUser,deleteUser , editUser };
 

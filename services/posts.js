@@ -1,7 +1,7 @@
 const Post = require('../models/posts');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
-
+const tokenSevice= require('../services/token.js');
 async function createPost(text, token, date, img) {
     const secretKey = 'yourSecretKey';
 
@@ -46,15 +46,56 @@ async function createPost(text, token, date, img) {
         return { success: false, message: 'An error occurred while creating the post' };
     }
 }
-async function getAllPosts(){
-    try {
-        const posts = await Post.find();
 
-        return { success: true, posts: posts };
-      } catch (error) {
+async function getAllPosts(token) {
+    try {
+        const usernamePromise = tokenSevice.getUsernameFromToken(token);
+        const username = await usernamePromise;
+        if (!username) {
+            return { success: false, message: 'Invalid token' };
+        }
+
+        // Find the user based on the username from the token
+        const user = await User.findOne({ userName: username });
+        if (!user) {
+            return { success: false, message: 'User not found' };
+        }
+
+        // Get the user's friend IDs
+        const friendIds = user.friends.map(friend => friend.username);
+
+        // Find the 20 most recent posts of the user's friends
+        let friendPosts = await Post.aggregate([
+            // Match posts where the userId is in the friendIds array
+            { $match: { profile: { $in: friendIds } } },
+            // Sort posts by date in descending order
+            { $sort: { date: -1 } },
+            // Limit the result to 20 posts
+            { $limit: 20 }
+        ]);
+
+        // Get the user IDs of friends
+        const friendUserIds = user.friends.map(friend => friend.username);
+
+        // Find the posts of users who are not friends with the user
+        let nonFriendPosts = await Post.aggregate([
+            // Match posts where the userId is not in the friendUserIds array
+            { $match: { profile: { $nin: friendUserIds } } },
+            // Sort posts by date in descending order
+            { $sort: { date: -1 } },
+            // Limit the result to 5 posts
+            { $limit: 5 }
+        ]);
+
+        // Concatenate friendPosts and nonFriendPosts arrays
+        const allPosts = [...friendPosts, ...nonFriendPosts];
+
+        return { success: true, posts: allPosts };
+    } catch (error) {
         return { success: false, message: 'Error fetching posts' };
-      }
+    }
 }
+
 async function getPost(postId){
     try {
         const post = await Post.findOne({id:postId});
@@ -63,4 +104,12 @@ async function getPost(postId){
     return { success: false, post:'' };
   }
 }
-module.exports = { createPost, getAllPosts,getPost };
+async function getUserPosts(userId){
+    try {
+        const userPosts = await Post.find({ profile: userId });
+    return { success: true, post: userPosts };
+    } catch (error) {
+    return { success: false, post:'' };
+  }
+}
+module.exports = { createPost, getAllPosts,getPost,getUserPosts };

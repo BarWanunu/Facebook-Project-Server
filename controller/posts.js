@@ -8,8 +8,8 @@ const createPost = async (req, res) => {
 }
 
 const getAllPosts = async (req, res) => {
- 
-  const result = await postService.getAllPosts( );
+  const token = req.headers.authorization.split(' ')[1]; 
+  const result = await postService.getAllPosts( token);
   res.json(result);
 }
 const getPost = async (req, res) => {
@@ -17,5 +17,10 @@ const getPost = async (req, res) => {
   const result = await postService.getPost( postId);
   res.json(result);
 }
-
-module.exports = {createPost,getAllPosts,getPost};
+const getUserPosts = async (req, res) => {
+  const userId = req.params.id;
+  const token = req.headers.authorization.split(' ')[1]; 
+  const result = await postService.getUserPosts( userId);
+  res.json(result);
+}
+module.exports = {createPost,getAllPosts,getPost,getUserPosts};

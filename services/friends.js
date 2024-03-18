@@ -91,7 +91,7 @@ const deleteFriend = async (token, friendUsername) => {
     // Update the user's friends list to remove the specified friend
     myuser.friends = myuser.friends.filter(userName => userName !==friendUsername);
     await myuser.save();
-    friendUser.friends = friendUser.friends.filter(userName => userName !==userName);
+    friendUser.friends = friendUser.friends.filter(userName => userName !==username);
     await friendUser.save();
 
     // Successfully removed friend
@@ -101,5 +101,97 @@ const deleteFriend = async (token, friendUsername) => {
     return { success: false, message: 'Internal Server Error' };
   }
 };
+const addFriendsRequest = async (token, friendUsername) => {
+  try {
+    const usernamePromise = tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    const user = await User.findOne({ userName: username });
 
-module.exports = { addFriends,getAllFriends,deleteFriend };
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+
+    // Check if the friend is not already in the friends list
+    if (!user.friends.some(friend => friend.username === friendUsername)) {
+      const friend = await User.findOne({ userName: friendUsername });
+      if (!friend.friendsRequest.some(friend => friend.username === username)) {
+      
+      
+        if (!friend) {
+          return { success: false, message: 'Friend not found' };
+        }
+
+        // Ensure that the user and friend have the 'photo' field set
+        if (!user.photo) {
+          return { success: false, message: 'User photo is missing' };
+        }
+
+        // Add the friend to the user's friends with username and photo
+        friend.friendsRequest.push({ username: user.userName, photo: user.photo });
+        await friend.save();
+        return { success: true, message: 'Friend Request added successfully' };
+      } else {
+        return { success: false, message: 'Friend Request already been sent' };
+      }
+    } else {
+      return { success: false, message: 'User is already a friend' };
+    }
+  } catch (error) {
+    console.error('Error adding friend:', error.message);
+    return { success: false, message: 'Internal Server Error' };
+  }
+};
+
+const getAllFriendsRequest = async (token) => {
+  try {
+    // Get the username from the provided token
+    const username = await tokenSevice.getUsernameFromToken(token);
+
+    // Find the user by their own username
+    const user = await User.findOne({ userName: username });
+
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+     const requestedUserFriends = user.friendsRequest;
+        return { success: true, friendsRequest: requestedUserFriends };
+    // Check if the requested user is the same as the user making the request
+  } catch (error) {
+    console.error('Error fetching friends:', error.message);
+    return { success: false, message: 'Internal Server Error' };
+  }
+};
+const approveFriendsRequest = async (token, friendReqUsername) => {
+  try {
+    const username = await tokenSevice.getUsernameFromToken(token);
+
+    // Find the user by their own username
+    const user = await User.findOne({ userName: username });
+
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+
+    // Check if the friend request exists in the user's friendsRequest array
+    const friendRequestExists = user.friendsRequest.some(friendsRequest => friendsRequest.username === friendReqUsername);
+
+    if (friendRequestExists) {
+      // Call addFriends function with the user's ID and the friend's username
+      const updatedFriendsRequest = user.friendsRequest.filter(friend => friend.username !== friendReqUsername);
+
+      // Update the user document with the filtered friendsRequest array
+      user.friendsRequest = updatedFriendsRequest;
+      await user.save();
+
+      const addFriendsResponse = await addFriends(username, friendReqUsername);
+      return addFriendsResponse;
+    } else {
+      return { success: false, message: 'Friend request not found' };
+    }
+  } catch (error) {
+    console.error('Error approving friend request:', error.message);
+    return { success: false, message: 'Internal Server Error' };
+  }
+};
+
+module.exports = { addFriends,getAllFriends,deleteFriend,addFriendsRequest,getAllFriendsRequest,approveFriendsRequest };

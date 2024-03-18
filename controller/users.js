@@ -70,8 +70,21 @@ async function deleteUser(token, userId) {
     const message = await userService.deleteUser(token,userId);
     return message;
 }
-async function editUser(token, userId) {
-    const message = await userService.editUser(token,userId);
+async function editUser(token,editedUsername, imageData) {
+    const message = await userService.editUser(token,editedUsername, imageData);
     return message;
 }
-module.exports = { createUser,checkUser,deletePost,editPost,likes,getAllFriends,deleteFriend,getUser,deleteUser,editUser };
+async function addFriendsRequest(token, userId) {
+    const message = await friendsService.addFriendsRequest(token,userId);
+    return message;
+}
+async function getAllFriendsRequest(token) {
+    const message = await friendsService.getAllFriendsRequest(token);
+    return message;
+}
+async function approveFriendsRequest(token,friendId) {
+    const message = await friendsService.approveFriendsRequest(token,friendId);
+    return message;
+}
+
+module.exports = { createUser,checkUser,deletePost,editPost,likes,getAllFriends,deleteFriend,getUser,deleteUser,editUser,addFriendsRequest,getAllFriendsRequest,approveFriendsRequest };

@@ -153,6 +153,21 @@ async function editPost(userId, postId, token, newtext) {
     if (editedImage != '') {
         await User.updateOne({ _id: userAccount._id }, { $set: { photo: editedImage } });
     }
+      // Update friends' usernames and profile images
+      for (const friend of userAccount.friends) {
+        // Update username and profile image if friend matches
+        if (friend.username != editUsername ||  editedImage != '') {
+            await User.updateOne(
+                { _id: userAccount._id, 'friends.username': friend.username },
+                {
+                    $set: {
+                        'friends.$.username': editUsername,
+                        'friends.$.photo': editedImage !== '' ? editedImage : friend.photo
+                    }
+                }
+            );
+        }
+    }
     const userPosts = await Post.find({ profile: username });
     for (const post of userPosts) {
         if (username != editUsername) {

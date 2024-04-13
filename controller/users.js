@@ -41,7 +41,11 @@ async function checkUser(username, password) {
     const message = await userService.checkUser(username, password);
     return message;
 }
-async function deletePost(userId,postId, token) {
+const deletePost = async (req, res) => {
+    const userId = req.params.id;
+    const postId = req.params.pid;
+    const token = req.headers.authorization.split(' ')[1]; // Extract token from Authorization header
+  
     const message = await userService.deletePost(userId,postId, token);
     return message;
 }

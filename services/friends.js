@@ -81,18 +81,23 @@ const deleteFriend = async (token, friendUsername) => {
   try {
     // Get the username of the user making the request
     const usernamePromise = tokenSevice.getUsernameFromToken(token);
-    const username = await usernamePromise;
-    const myuser = await User.findOne({ userName: username });
+    const Username = await usernamePromise;
+    const myuser = await User.findOne({ userName: Username });
     if (!myuser) {
       // User not found
       return { success: false, message: 'User not found' };
     }
     const friendUser = await User.findOne({ userName: friendUsername });
+    if(!friendUser){
+      return { success: false, message: 'friend not found' };
+    }
     // Update the user's friends list to remove the specified friend
-    myuser.friends = myuser.friends.filter(userName => userName !==friendUsername);
+    // Update the user's friends list to remove the specified friend
+    myuser.friends = myuser.friends.filter(friend => friend.username !== friendUsername);
     await myuser.save();
-    friendUser.friends = friendUser.friends.filter(userName => userName !==username);
+    friendUser.friends = friendUser.friends.filter(friend => friend.username !== Username);
     await friendUser.save();
+
 
     // Successfully removed friend
     return { success: true, message: 'Friend removed successfully' };

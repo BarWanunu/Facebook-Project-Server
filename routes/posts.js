@@ -9,7 +9,7 @@ router.post('/create', async (req, res) =>{
 
 router.get('/', async (req, res) =>{
   const message = await controller.getAllPosts(req, res);
-  res.json(message);
+  // res.json(message);
 });
 router.get('/:pid', async (req, res) =>{
   const message = await controller.getPost(req, res);

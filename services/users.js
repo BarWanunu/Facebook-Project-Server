@@ -42,25 +42,35 @@ async function checkUser(Username, password){
     }
 }
 
-async function deletePost(userId,postId, token){
-    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+async function deletePost(userId, postId, token) {
+    const usernamePromise = tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
     
-    const username = await usernamePromise; //
-    if(username!=userId){
-        return { success: false, message: 'Unauthorized access'  };
+    if (username != userId) {
+        return { success: false, message: 'Unauthorized access' };
     }
-    const post = await Post.findOne({id:postId});
+
+    const post = await Post.findOne({ id: postId });
     if (!post) {
         return { success: false, message: 'Post not found' };
-      }
-      postrealId=post._id;
-      const user= User.findOne({ userName: username });
-      await User.updateOne({ _id:user.id }, { $pull: { posts: postrealId } });
-      await Post.deleteOne({ id: postId });
-      return { success: true, message: 'Post has been deleted' };
-      // Remove the post ID from the user's posts array
-      
+    }
+
+    const user = await User.findOne({ userName: username });
+    if (!user) {
+        return { success: false, message: 'User not found' };
+    }
+
+    // Filter out the post from the user's posts array
+    user.posts = user.posts.filter(_id =>_id.toString() !== post._id.toString());
+    await user.save();
+
+    // Delete the post from the Post collection
+    await Post.deleteOne({ id: postId });
+
+    return { success: true, message: 'Post has been deleted' };
 }
+
+
 async function editPost(userId, postId, token, newtext) {
     const usernamePromise = tokenSevice.getUsernameFromToken(token);
     const username = await usernamePromise;
@@ -94,40 +104,84 @@ async function editPost(userId, postId, token, newtext) {
   
   async function deleteUser(token){
     const usernamePromise= tokenSevice.getUsernameFromToken(token);
-    const username = await usernamePromise;
-    if(!username){
+    const username1 = await usernamePromise;
+    if(!username1){
         return { success: false, message: 'User not found' };
     }
-    const userAccount= await User.findOne({userName:username});
+    const userAccount= await User.findOne({userName:username1});
     if(!userAccount){
         return { success: false, message: 'User not found' };
     }
-    await User.deleteOne({userName:username});
+    const userPosts = await Post.find({ profile: username1 });
+
+    // Delete each post individually
+    for (const post of userPosts) {
+        await Post.deleteOne({ _id: post._id });
+    }
+       // Remove user from friends' lists
+       const userFriends = userAccount.friends;
+       for (const friend of userFriends) {
+           const friendUser = await User.findOne({ userName: friend.username });
+           if (friendUser) {
+
+            friendUser.friends = friendUser.friends.filter(f => f.username !== username1);
+            await friendUser.save();
+           }
+       }
+   
+    await User.deleteOne({userName:username1});
     return { success: true, message: 'user has been found',user:userAccount };
   }
 
-  async function editUser(token, editUsername, editedImage){
-    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+  async function editUser(token, editUsername, editedImage) {
+    const usernamePromise = tokenSevice.getUsernameFromToken(token);
     const username = await usernamePromise;
-    if(!username){
+    if (!username) {
         return { success: false, message: 'User not found' };
     }
-    const userAccount= await User.findOne({userName:username});
-    if(!userAccount){
+    const userAccount = await User.findOne({ userName: username });
+    if (!userAccount) {
         return { success: false, message: 'User not found' };
     }
-    if(username!=editUsername){
-        const findUser= await User.findOne({userName:editUsername});
-        if(findUser){
+    if (username != editUsername) {
+        const findUser = await User.findOne({ userName: editUsername });
+        if (findUser) {
             return { success: false, message: 'Username is already taken' };
         }
-        await User.updateOne({ username: username }, { $set: { username: editUsername } });
+        await User.updateOne({ _id: userAccount._id }, { $set: { userName: editUsername } });
     }
-    if(editedImage!=''){
-        await User.updateOne({ username: username }, { $set: { photo: editedImage } });
+    if (editedImage != '') {
+        await User.updateOne({ _id: userAccount._id }, { $set: { photo: editedImage } });
     }
-   
-    return { success: true, message: 'user has been changed',username:userAccount.userName, profile:userAccount.photo };
-  }
+      // Update friends' usernames and profile images
+      for (const friend of userAccount.friends) {
+        // Update username and profile image if friend matches
+        if (friend.username != editUsername ||  editedImage != '') {
+            await User.updateOne(
+                { _id: userAccount._id, 'friends.username': friend.username },
+                {
+                    $set: {
+                        'friends.$.username': editUsername,
+                        'friends.$.photo': editedImage !== '' ? editedImage : friend.photo
+                    }
+                }
+            );
+        }
+    }
+    const userPosts = await Post.find({ profile: username });
+    for (const post of userPosts) {
+        if (username != editUsername) {
+            post.profile = editUsername;
+        }
+        if (editedImage != '') {
+            post.profileImg = editedImage;
+        }
+        await post.save();
+    }
+
+
+    return { success: true, message: 'User has been changed', username: editUsername, profile: editedImage };
+}
+
 module.exports = { createUser, checkUser,deletePost, editPost,getUser,deleteUser , editUser };
 

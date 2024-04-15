@@ -10,13 +10,17 @@ const Mongodb = MongoClient;
 const mongoose =require('mongoose')
 
 mongoose.connect('mongodb://localhost:27017/facebook', { useNewUrlParser: true, useUnifiedTopology: true });
-addFriends("image","shaked");
+// addFriends("shaked","Shaked Gitta");
+// addFriends("user","Shaked Gitta");
+
 const cors = require('cors');
 app.use(express.static('public'));
 app.use(cors());
 // Middleware to parse JSON data
 app.use(bodyParser.json({ limit: '10mb' }));
 // Route to handle the POST or PATCH request
+const customENV = require('custom-env');
+customENV.env(process.env.NODE_ENV,'./config')
 
 const signupRoutes = require('./routes/users.js');
 app.use('/signup', signupRoutes);
@@ -37,4 +41,4 @@ app.use('/users', usersRoutes);
 //   res.json(message);
 // });
 
-app.listen(80);
+app.listen(process.env.PORT);

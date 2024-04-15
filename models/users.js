@@ -37,6 +37,16 @@ const userSchema = new Schema({
         required: true,
       },
     }],
+    friendsRequest: [{
+      username: {
+        type: String,
+        required: true,
+      },
+      photo: {
+        type: String,
+        required: true,
+      },
+    }],
 })
 
 module.exports = mongoose.model('User', userSchema);

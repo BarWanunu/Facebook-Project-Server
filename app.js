@@ -19,6 +19,8 @@ app.use(cors());
 // Middleware to parse JSON data
 app.use(bodyParser.json({ limit: '10mb' }));
 // Route to handle the POST or PATCH request
+const customENV = require('custom-env');
+customENV.env(process.env.NODE_ENV,'./config')
 
 const signupRoutes = require('./routes/users.js');
 app.use('/signup', signupRoutes);
@@ -39,4 +41,4 @@ app.use('/users', usersRoutes);
 //   res.json(message);
 // });
 
-app.listen(80);
+app.listen(process.env.PORT);

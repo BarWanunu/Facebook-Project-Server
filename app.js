@@ -9,6 +9,7 @@ const app = express();
 const Mongodb = MongoClient;
 const mongoose =require('mongoose')
 
+
 mongoose.connect('mongodb://localhost:27017/facebook', { useNewUrlParser: true, useUnifiedTopology: true });
 // addFriends("shaked","Shaked Gitta");
 // addFriends("user","Shaked Gitta");

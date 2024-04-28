@@ -4,8 +4,7 @@ const User = require('../models/users');
 const tokenSevice= require('../services/token.js');
 async function createPost(text, token, date, img) {
     const secretKey = 'yourSecretKey';
-
-    try {
+        try {
         // Verify and decode the received token
         const decoded = jwt.verify(token, secretKey);
 
@@ -88,17 +87,17 @@ async function getAllPosts(token) {
         ]);
 
         // Concatenate friendPosts and nonFriendPosts arrays
-        const allPosts = [...friendPosts, ...nonFriendPosts];
+        const posts2 = [...friendPosts, ...nonFriendPosts];
 
-        return { success: true, posts: allPosts };
+        return posts2;
     } catch (error) {
-        return { success: false, message: 'Error fetching posts' };
+        res.status(500).json( { success: false, message: 'Error fetching posts' });
     }
 }
 
 async function getPost(postId){
     try {
-        const post = await Post.findOne({id:postId});
+        let post = await Post.findOne({id:postId});
     return { success: true, post: post };
     } catch (error) {
     return { success: false, post:'' };
@@ -106,10 +105,16 @@ async function getPost(postId){
 }
 async function getUserPosts(userId){
     try {
-        const userPosts = await Post.find({ profile: userId });
-    return { success: true, post: userPosts };
+        const userPosts = await Post.aggregate([
+            { $match: { profile: userId } }
+            // Add more aggregation stages if needed
+        ]);
+       
+        return userPosts;
     } catch (error) {
-    return { success: false, post:'' };
-  }
+        //return { success: false, message: 'Error fetching posts' };
+        res.status(500).json( { success: false, message: 'Error fetching posts' });
+    }
 }
+
 module.exports = { createPost, getAllPosts,getPost,getUserPosts };

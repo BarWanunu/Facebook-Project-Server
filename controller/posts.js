@@ -1,5 +1,7 @@
 const postService = require('../services/posts');
 const postOptionService = require('../services/post_option.js');
+const userService = require('../services/users.js');
+
 const createPost = async (req, res) => {
   const { text, data, img } = req.body;
   const token = req.headers['authorization'].split(' ')[1];
@@ -8,10 +10,26 @@ const createPost = async (req, res) => {
 }
 
 const getAllPosts = async (req, res) => {
-  const token = req.headers.authorization.split(' ')[1]; 
-  const result = await postService.getAllPosts( token);
+  // Check if the Authorization header exists
+  if (!req.headers.authorization) {
+    return res.status(401).json({ success: false, message: "Authorization header is missing" });
+  }
+
+  // Split the Authorization header to get the token
+  const tokenParts = req.headers.authorization.split(' ');
+
+  // Check if the token has the correct format
+  if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+    return res.status(401).json({ success: false, message: "Invalid token format" });
+  }
+
+  const token = tokenParts[1]; // Extract the token
+
+  // Proceed with your logic to get all posts using the token
+  const result = await postService.getAllPosts(token);
   res.json(result);
 }
+
 const getPost = async (req, res) => {
   const postId = req.params.pid;
   const result = await postService.getPost( postId);

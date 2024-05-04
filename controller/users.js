@@ -119,4 +119,12 @@ const approveFriendsRequest= async (req, res) => {
     return message;
 }
 
-module.exports = { createUser,checkUser,deletePost,getAllFriends,deleteFriend,getUser,deleteUser,editUser,addFriendsRequest,getAllFriendsRequest,approveFriendsRequest };
+const rejectFriendRequest= async (req, res) => {
+    const userId = req.params.id;
+    const friendId=req.params.fid;
+    const token = req.headers.authorization.split(' ')[1]; // Extract token from Authorization header
+  
+    const message = await friendsService.rejectFriendRequest(token,friendId);
+    return message;
+}
+module.exports = { createUser,checkUser,deletePost,getAllFriends,deleteFriend,getUser,deleteUser,editUser,addFriendsRequest,getAllFriendsRequest,approveFriendsRequest,rejectFriendRequest };

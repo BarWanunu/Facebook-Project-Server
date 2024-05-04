@@ -37,7 +37,7 @@ const getPost = async (req, res) => {
 }
 const getUserPosts = async (req, res) => {
   const userId = req.params.id;
-  const token = req.headers.authorization.split(' ')[1]; 
+  //const token = req.headers.authorization.split(' ')[1]; 
   const result = await postService.getUserPosts( userId);
   res.json(result);
 }
@@ -53,7 +53,8 @@ const editPost= async (req, res) => {
 const likes= async (req, res) => {
   const userId = req.params.id;
   const postId = req.params.pid;
-  const { token, isLiked} = req.body;
+  const {isLiked} = req.body;
+  const token = req.headers.authorization.split(' ')[1]; // Extract token from Authorization header
   const message = await postOptionService.likes(userId,postId, token,isLiked);
   return message;
 }

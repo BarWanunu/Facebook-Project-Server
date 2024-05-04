@@ -199,4 +199,36 @@ const approveFriendsRequest = async (token, friendReqUsername) => {
   }
 };
 
-module.exports = { addFriends,getAllFriends,deleteFriend,addFriendsRequest,getAllFriendsRequest,approveFriendsRequest };
+const rejectFriendRequest = async (token, friendReqUsername) => {
+  try {
+    const username = await tokenSevice.getUsernameFromToken(token);
+
+    // Find the user by their own username
+    const user = await User.findOne({ userName: username });
+
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+
+    // Check if the friend request exists in the user's friendsRequest array
+    const friendRequestExists = user.friendsRequest.some(friendsRequest => friendsRequest.username === friendReqUsername);
+
+    if (friendRequestExists) {
+      // Filter out the friend request to be rejected
+      const updatedFriendsRequest = user.friendsRequest.filter(friend => friend.username !== friendReqUsername);
+
+      // Update the user document with the filtered friendsRequest array
+      user.friendsRequest = updatedFriendsRequest;
+      await user.save();
+
+      return { success: true, message: 'Friend request rejected successfully' };
+    } else {
+      return { success: false, message: 'Friend request not found' };
+    }
+  } catch (error) {
+    console.error('Error rejecting friend request:', error.message);
+    return { success: false, message: 'Internal Server Error' };
+  }
+};
+
+module.exports = { addFriends,getAllFriends,deleteFriend,addFriendsRequest,getAllFriendsRequest,approveFriendsRequest,rejectFriendRequest };

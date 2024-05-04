@@ -92,12 +92,11 @@ router.get('/:id/friends/requests',async (req, res) => {
   res.json(message);
 });
 router.patch('/:id/friends/:fid',async (req, res) => {
-  // const userId = req.params.id;
-  // const friendId=req.params.fid;
-  // const token = req.headers.authorization.split(' ')[1]; // Extract token from Authorization header
-
-  // const message = await userController.deleteFriend(token,friendId);
   const message = await userController.approveFriendsRequest(req, res);
+  res.json(message);
+});
+router.delete('/:id/friends/requests',async (req, res) => {
+  const message = await userController.deleteFriend(req, res);
   res.json(message);
 });
 module.exports = router;

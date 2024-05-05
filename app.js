@@ -4,6 +4,8 @@ const { MongoClient } = require('mongodb');
 const { addFriends } = require('./services/friends.js');
 const Post = require('./models/posts');
 const app = express();
+const  { initializeUsers, initializePosts }  = require('./services/first_run');
+
 const Mongodb = MongoClient;
 const mongoose =require('mongoose')
 // Custom environment variable configuration
@@ -21,14 +23,21 @@ app.use(bodyParser.json({ limit: '10mb' }));
 
 
 // Update each post document to include the likedBy field
-async function migratePosts() {
-    const posts = await Post.find();
-for (const post of posts) {
-  post.likedBy = []; // Initialize likedBy field as an empty array
-  await post.save(); // Save the updated post document
+// async function migratePosts() {
+//     const posts = await Post.find();
+// for (const post of posts) {
+//   post.likedBy = []; // Initialize likedBy field as an empty array
+//   await post.save(); // Save the updated post document
+// }
+// }
+// migratePosts();
+let flag = true;
+if(flag){
+    console.log("flag", flag);
+    initializeUsers(); 
+     initializePosts();
+    !flag;
 }
-}
-migratePosts();
 const signupRoutes = require('./routes/users.js');
 app.use('/signup', signupRoutes);
 

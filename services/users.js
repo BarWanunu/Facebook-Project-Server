@@ -123,6 +123,13 @@ async function editPost(userId, postId, token, newtext) {
     if(!userAccount){
         return { success: false, message: 'User not found' };
     }
+    const userLikedPosts = await Post.find({ likedBy: username1 });
+
+    // Remove the user's username from the likedBy array in each post
+    for (const post of userLikedPosts) {
+        post.likedBy = post.likedBy.filter(user => user !== username1);
+        await post.save();
+    }
     const userPosts = await Post.find({ profile: username1 });
 
     // Delete each post individually
@@ -195,17 +202,29 @@ async function editPost(userId, postId, token, newtext) {
         if (username !== editUsername) {
             // Update the profile field in the post
             post.profile = editUsername;
-            // Update likes made by the user in the post
-            post.likedBy.forEach((likedUserId, index) => {
-                if (likedUserId === username) {
-                    post.likedBy[index] = editUsername;
-                }
-            })
+           
         }
+
         if (editedImage != '') {
             post.profileImg = editedImage;
         }
         await post.save();
+    }
+    const posts = await Post.find();
+    if (username !== editUsername) {
+    for (const post of posts) {
+       
+        for (let i = 0; i < post.likedBy.length; i++) {
+            console.log('Liked By:', post.likedBy[i]); // Log each likedBy value for debugging
+            
+            if (post.likedBy[i] === username) {
+                console.log('Updating likedBy:', editUsername); // Log the updated likedBy value
+                post.likedBy[i] = editUsername;
+            }
+
+        }
+        await post.save();
+        }
     }
 
 

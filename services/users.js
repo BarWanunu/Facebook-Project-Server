@@ -101,15 +101,15 @@ async function editPost(userId, postId, token, newtext) {
   }
 
 // Function to get user details
-  async function getUser(token){
-    const usernamePromise= tokenSevice.getUsernameFromToken(token);
-    const username = await usernamePromise;
-    if(!username){
+  async function getUser(token,userID){
+    // const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    // const username = await usernamePromise;
+   
+
+    const userAccount= await User.findOne({userName:userID});
+    if(!userAccount){
         return { success: false, message: 'User not found' };
     }
-        // Find the user based on the token
-
-    const userAccount= await User.findOne({userName:username});
     return { success: true, message: 'user has been found',user:userAccount };
   }
   // Function to delete a user
@@ -169,17 +169,19 @@ async function editPost(userId, postId, token, newtext) {
     }
       // Update friends' usernames and profile images
       for (const friend of userAccount.friends) {
-        // Update username and profile image if friend matches
-        if (friend.username != editUsername ||  editedImage != '') {
-            await User.updateOne(
-                { _id: userAccount._id, 'friends.username': friend.username },
-                {
-                    $set: {
-                        'friends.$.username': editUsername,
-                        'friends.$.photo': editedImage !== '' ? editedImage : friend.photo
-                    }
-                }
-            );
+        // Find friend's user account
+        const friendUser = await User.findOne({ userName: friend.username });
+        if (!friendUser) {
+            continue; // Skip if friend's user account is not found
+        }
+        
+        // Find the friend we want to change
+        const friendToUpdate = friendUser.friends.find(f => f.username === username);
+        if (friendToUpdate) {
+            // Update friend's username and profile image
+            friendToUpdate.username = editUsername;
+            friendToUpdate.photo = editedImage !== '' ? editedImage : friend.photo;
+            await friendUser.save();
         }
     }
         // Update the username and profile image in user's posts

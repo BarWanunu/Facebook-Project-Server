@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenSevice = require('../services/token.js');
 const Post = require('../models/posts');
+
+// Function to add a friend
 const addFriends = async (userId, friendUsername) => {
   try {
     const user = await User.findOne({ userName: userId });
@@ -35,7 +37,7 @@ const addFriends = async (userId, friendUsername) => {
   }
 };
 
-
+// Function to get all friends
 const getAllFriends = async (token, userClientID) => {
   try {
     // Get the username from the provided token
@@ -76,7 +78,7 @@ const getAllFriends = async (token, userClientID) => {
     return { success: false, message: 'Internal Server Error' };
   }
 };
-
+// Function to delete a friend
 const deleteFriend = async (token, friendUsername) => {
   try {
     // Get the username of the user making the request
@@ -92,7 +94,6 @@ const deleteFriend = async (token, friendUsername) => {
       return { success: false, message: 'friend not found' };
     }
     // Update the user's friends list to remove the specified friend
-    // Update the user's friends list to remove the specified friend
     myuser.friends = myuser.friends.filter(friend => friend.username !== friendUsername);
     await myuser.save();
     friendUser.friends = friendUser.friends.filter(friend => friend.username !== Username);
@@ -106,6 +107,7 @@ const deleteFriend = async (token, friendUsername) => {
     return { success: false, message: 'Internal Server Error' };
   }
 };
+// Function to add a friend request
 const addFriendsRequest = async (token, friendUsername) => {
   try {
     const usernamePromise = tokenSevice.getUsernameFromToken(token);
@@ -146,7 +148,7 @@ const addFriendsRequest = async (token, friendUsername) => {
     return { success: false, message: 'Internal Server Error' };
   }
 };
-
+// Function to get all friend requests
 const getAllFriendsRequest = async (token) => {
   try {
     // Get the username from the provided token

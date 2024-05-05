@@ -29,12 +29,14 @@ const createUser = async (req, res) => {
         return { success: false, message: 'Please upload a profile picture' };
             
         }
+            // Check if photo size is within 140 KB
+    const sizeInKB = Buffer.byteLength(photo, 'base64') / 1024;
+    if (sizeInKB > 140) {
+        return { success: false, message: 'Profile picture size exceeds the limit of 140 KB' };
+    }
+
     const message= userService.createUser(email, username, password,photo);
     return message
-
-
-
-    // Check if password meets the requirements
 
 }
  const checkUser= async (req, res) => {
@@ -50,14 +52,7 @@ const deletePost = async (req, res) => {
     const message = await userService.deletePost(userId,postId, token);
     return message;
 }
-// async function editPost(userId,postId, token, text) {
-//     const message = await userService.editPost(userId,postId, token,text);
-//     return message;
-// }
-// async function likes(userId,postId, token,isliked) {
-//     const message = await postOptionService.likes(userId,postId, token,isliked);
-//     return message;
-// }
+
 const getAllFriends = async (req, res) => {
     const userId = req.params.id;
  

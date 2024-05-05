@@ -3,18 +3,19 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenService = require('../services/token.js');
 const Post = require('../models/posts');
-
+// Function to handle like/unlike functionality
 async function likes(userId, postId, token, isLiked) {
+  // Get the username from the token
   const usernamePromise = tokenService.getUsernameFromToken(token);
   
   const username = await usernamePromise;
-
+  // Find the post by its id
   const post = await Post.findOne({ id: postId });
 
   if (!post) {
     return { success: false, message: 'Post not found' };
   }
-
+  // Get the real id of the post
   const postRealId = post._id;
   let postLikes = post.likes;
 

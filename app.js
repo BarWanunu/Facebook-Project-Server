@@ -3,17 +3,15 @@ const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const { addFriends } = require('./services/friends.js');
 
-
-
 const app = express();
 const Mongodb = MongoClient;
 const mongoose =require('mongoose')
-
+// Custom environment variable configuration
 const customENV = require('custom-env');
 customENV.env(process.env.NODE_ENV,'./config')
-
+// Connecting to MongoDB using Mongoose
 mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true });
-
+// Importing and configuring CORS middleware
 const cors = require('cors');
 app.use(express.static('public'));
 app.use(cors());
@@ -34,10 +32,6 @@ const userRoutes = require('./routes/users.js');
 app.use('/User', userRoutes);
 const usersRoutes = require('./routes/users.js');
 app.use('/users', usersRoutes);
-// app.post('/signup', async (req, res) => {
-//   const { email, username, password, confirmPassword, photo } = req.body;
-//   const message = await createUserController(email, username, password, confirmPassword, photo);
-//   res.json(message);
-// });
+// Listening on the specified port
 
 app.listen(process.env.PORT);

@@ -19,18 +19,23 @@ async function likes(userId, postId, token, isLiked) {
   const postRealId = post._id;
   let postLikes = post.likes;
 
-  if (isLiked) {
+
+    const userLiked = post.likedBy.includes(username);
+
+    if (userLiked) {
     // If already liked, decrement likes by 1 and update the post
     const updatedLikes = postLikes - 1;
-    await Post.updateOne({ _id: postRealId }, { $set: { likes: updatedLikes } });
+    await Post.updateOne({ _id: postRealId }, { $pull: { likedBy: username }, $set: { likes: updatedLikes } });
     return { success: true, message: 'Unliked successfully', likes: updatedLikes };
-  }
+    }
+    else{
+      const updatedLikes = postLikes + 1;
+        // Add the username to the likedBy array
+        await Post.updateOne({ _id: postRealId }, { $push: { likedBy: username }, $set: { likes: updatedLikes } });
+        return { success: true, message: 'Liked successfully', likes: updatedLikes };
+      }
+    }
+  
 
-  // If not liked, increment likes and update the post
-  const updatedLikes = postLikes + 1;
-  await Post.updateOne({ _id: postRealId }, { $set: { likes: updatedLikes } });
-
-  return { success: true, message: 'Liked successfully', likes: updatedLikes };
-}
 
 module.exports = { likes };

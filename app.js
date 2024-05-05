@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const { addFriends } = require('./services/friends.js');
-
+const Post = require('./models/posts');
 const app = express();
 const Mongodb = MongoClient;
 const mongoose =require('mongoose')
@@ -19,6 +19,16 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 // Route to handle the POST or PATCH request
 
+
+// Update each post document to include the likedBy field
+async function migratePosts() {
+    const posts = await Post.find();
+for (const post of posts) {
+  post.likedBy = []; // Initialize likedBy field as an empty array
+  await post.save(); // Save the updated post document
+}
+}
+migratePosts();
 const signupRoutes = require('./routes/users.js');
 app.use('/signup', signupRoutes);
 

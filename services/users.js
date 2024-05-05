@@ -192,8 +192,15 @@ async function editPost(userId, postId, token, newtext) {
 
     const userPosts = await Post.find({ profile: username });
     for (const post of userPosts) {
-        if (username != editUsername) {
+        if (username !== editUsername) {
+            // Update the profile field in the post
             post.profile = editUsername;
+            // Update likes made by the user in the post
+            post.likedBy.forEach((likedUserId, index) => {
+                if (likedUserId === username) {
+                    post.likedBy[index] = editUsername;
+                }
+            })
         }
         if (editedImage != '') {
             post.profileImg = editedImage;

@@ -29,7 +29,11 @@ const postSchema = new Schema({
     likes: {
       type: Number,
       default: 0
-    }
+    },
+    likedBy: {
+      type: [String], // Array of usernames
+      default: [],
+    },
   })
 
   module.exports = mongoose.model('Post', postSchema);

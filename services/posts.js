@@ -2,6 +2,7 @@ const Post = require('../models/posts');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const tokenSevice= require('../services/token.js');
+// Function to create a new post
 async function createPost(text, token, date, img) {
     const secretKey = 'yourSecretKey';
         try {
@@ -21,6 +22,13 @@ async function createPost(text, token, date, img) {
         const userProfile = user.photo;
         const lastPost = await Post.findOne({}, {}, { sort: { 'id': -1 } });
         const newPostId = lastPost ? lastPost.id + 1 : 1;
+        if(img){
+               // Check if photo size is within 140 KB
+               const sizeInKB = Buffer.byteLength(img, 'base64') / 1024;
+               if (sizeInKB > 140) {
+                   return { success: false, message: 'Post image size exceeds the limit of 140 KB' };
+               }
+        }
 
         // Create a new post
         const post = new Post({
@@ -45,7 +53,7 @@ async function createPost(text, token, date, img) {
         return { success: false, message: 'An error occurred while creating the post' };
     }
 }
-
+// Function to get all posts for user's fees
 async function getAllPosts(token) {
     try {
         const usernamePromise = tokenSevice.getUsernameFromToken(token);
@@ -94,7 +102,7 @@ async function getAllPosts(token) {
         res.status(500).json( { success: false, message: 'Error fetching posts' });
     }
 }
-
+// Function to get a specific post by its ID
 async function getPost(postId){
     try {
         let post = await Post.findOne({id:postId});
@@ -103,6 +111,7 @@ async function getPost(postId){
     return { success: false, post:'' };
   }
 }
+// Function to get all posts of a specific user
 async function getUserPosts(userId){
     try {
         const userPosts = await Post.aggregate([

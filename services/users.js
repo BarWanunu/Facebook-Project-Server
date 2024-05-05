@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenSevice= require('../services/token.js');
 const Post = require('../models/posts');
+        // Check if the username is already taken
 async function createUser(emailuser, usernameuser, passworduser, photouser) {
     try {
         console.log('Checking for existing user with username:', usernameuser);
@@ -14,6 +15,7 @@ async function createUser(emailuser, usernameuser, passworduser, photouser) {
         if (userCount > 0) {
             return { success: false, message: 'Username is already taken' };
         }
+        // Create a new user instance
 
         const newUser = new User({ email: emailuser, userName: usernameuser, password: passworduser, photo: photouser });
 
@@ -28,6 +30,7 @@ async function createUser(emailuser, usernameuser, passworduser, photouser) {
     }
 }
 
+// Function to check user credentials for login
 async function checkUser(Username, password){
     const userAccount= await User.findOne({userName:Username});
     if(!userAccount){
@@ -42,14 +45,16 @@ async function checkUser(Username, password){
     }
 }
 
+// Function to delete a post
 async function deletePost(userId, postId, token) {
     const usernamePromise = tokenSevice.getUsernameFromToken(token);
     const username = await usernamePromise;
-    
+        // Check if the token matches the user ID
     if (username != userId) {
         return { success: false, message: 'Unauthorized access' };
     }
 
+    // Find the post to be deleted
     const post = await Post.findOne({ id: postId });
     if (!post) {
         return { success: false, message: 'Post not found' };
@@ -70,17 +75,21 @@ async function deletePost(userId, postId, token) {
     return { success: true, message: 'Post has been deleted' };
 }
 
-
+// Function to edit a post
 async function editPost(userId, postId, token, newtext) {
     const usernamePromise = tokenSevice.getUsernameFromToken(token);
     const username = await usernamePromise;
     if (username != userId) {
       return { success: false, message: 'Unauthorized access' };
     }
+        // Find the post to be edited
+
     const post = await Post.findOne({ id: postId });
     if (!post) {
       return { success: false, message: 'Post not found' };
     }
+        // Update the text of the post
+
     const postrealId = post._id;
     const user = await User.findOne({ userName: username }).exec();
   
@@ -91,17 +100,19 @@ async function editPost(userId, postId, token, newtext) {
     // Remove the post ID from the user's posts array
   }
 
-
+// Function to get user details
   async function getUser(token){
     const usernamePromise= tokenSevice.getUsernameFromToken(token);
     const username = await usernamePromise;
     if(!username){
         return { success: false, message: 'User not found' };
     }
+        // Find the user based on the token
+
     const userAccount= await User.findOne({userName:username});
     return { success: true, message: 'user has been found',user:userAccount };
   }
-  
+  // Function to delete a user
   async function deleteUser(token){
     const usernamePromise= tokenSevice.getUsernameFromToken(token);
     const username1 = await usernamePromise;
@@ -133,16 +144,19 @@ async function editPost(userId, postId, token, newtext) {
     return { success: true, message: 'user has been found',user:userAccount };
   }
 
+// Function to edit user details
   async function editUser(token, editUsername, editedImage) {
     const usernamePromise = tokenSevice.getUsernameFromToken(token);
     const username = await usernamePromise;
     if (!username) {
         return { success: false, message: 'User not found' };
     }
+        // Find the user to be edited
     const userAccount = await User.findOne({ userName: username });
     if (!userAccount) {
         return { success: false, message: 'User not found' };
     }
+        // Check if the username is already taken
     if (username != editUsername) {
         const findUser = await User.findOne({ userName: editUsername });
         if (findUser) {
@@ -168,6 +182,8 @@ async function editPost(userId, postId, token, newtext) {
             );
         }
     }
+        // Update the username and profile image in user's posts
+
     const userPosts = await Post.find({ profile: username });
     for (const post of userPosts) {
         if (username != editUsername) {

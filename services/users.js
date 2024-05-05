@@ -165,6 +165,10 @@ async function editPost(userId, postId, token, newtext) {
         await User.updateOne({ _id: userAccount._id }, { $set: { userName: editUsername } });
     }
     if (editedImage != '') {
+        const sizeInKB = Buffer.byteLength(editedImage, 'base64') / 1024;
+        if (sizeInKB > 140) {
+            return { success: false, message: 'Post image size exceeds the limit of 140 KB' };
+        }
         await User.updateOne({ _id: userAccount._id }, { $set: { photo: editedImage } });
     }
       // Update friends' usernames and profile images

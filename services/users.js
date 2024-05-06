@@ -148,7 +148,7 @@ async function editPost(userId, postId, token, newtext) {
        }
    
     await User.deleteOne({userName:username1});
-    return { success: true, message: 'user has been found',user:userAccount };
+    return { success: true, message: 'User deleted successfully',user:userAccount };
   }
 
 // Function to edit user details

@@ -59,6 +59,8 @@ router.get('/:id',async (req, res) => {
 router.delete('/:id',async (req, res) => {
 
   const message = await userController.deleteUser(req, res);
+  res.json(message);
+
 });
 router.patch('/:id',async (req, res) => {
  

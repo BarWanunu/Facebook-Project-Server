@@ -20,8 +20,9 @@ app.use(cors());
 // Middleware to parse JSON data
 app.use(bodyParser.json({ limit: '10mb' }));
 // Route to handle the POST or PATCH request
-
-
+const path = require('path');
+const fileURLToPath = require('url')
+const filename = __filename;
 // Update each post document to include the likedBy field
 // async function migratePosts() {
 //     const posts = await Post.find();
@@ -52,5 +53,7 @@ app.use('/User', userRoutes);
 const usersRoutes = require('./routes/users.js');
 app.use('/users', usersRoutes);
 // Listening on the specified port
-
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,'public','index.html'))
+})
 app.listen(process.env.PORT);

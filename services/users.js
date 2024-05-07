@@ -215,10 +215,10 @@ async function editPost(userId, postId, token, newtext) {
     for (const post of posts) {
        
         for (let i = 0; i < post.likedBy.length; i++) {
-            console.log('Liked By:', post.likedBy[i]); // Log each likedBy value for debugging
+            // console.log('Liked By:', post.likedBy[i]); // Log each likedBy value for debugging
             
             if (post.likedBy[i] === username) {
-                console.log('Updating likedBy:', editUsername); // Log the updated likedBy value
+                // console.log('Updating likedBy:', editUsername); // Log the updated likedBy value
                 post.likedBy[i] = editUsername;
             }
 

@@ -152,6 +152,16 @@ async function editPost(userId, postId, token, newtext) {
         });
     });
 }
+async function getUser(token){
+    const usernamePromise= tokenSevice.getUsernameFromToken(token);
+    const username = await usernamePromise;
+    if(!username){
+        return { success: false, message: 'User not found' };
+    }
+    const userAccount= await User.findOne({userName:username});
+    return { success: true, message: 'user has been found',user:userAccount };
+  }
+
   // Function to delete a user
   async function deleteUser(token){
     const usernamePromise= tokenSevice.getUsernameFromToken(token);
@@ -271,5 +281,5 @@ async function editPost(userId, postId, token, newtext) {
     return { success: true, message: 'User has been changed', username: editUsername, profile: editedImage };
 }
 
-module.exports = { createUser, checkUser,deletePost, editPost,getUser,deleteUser , editUser };
+module.exports = { createUser, checkUser,deletePost, editPost, getUser,deleteUser , editUser };
 

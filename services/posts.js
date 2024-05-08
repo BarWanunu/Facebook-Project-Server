@@ -69,7 +69,7 @@ async function checkURL(url) {
     return new Promise((resolve, reject) => {
         const client = new net.Socket();
         const TCP_SERVER_HOST =process.env.TCP_SERVER_IP;
-        const TCP_SERVER_PORT = process.env.TCP_SERVER_PORT;
+        const TCP_SERVER_PORT = parseInt(process.env.TCP_SERVER_PORT, 10);
 
         client.connect(TCP_SERVER_PORT, TCP_SERVER_HOST, () => {
             console.log('Connected to TCP server');

@@ -29,6 +29,9 @@ To view the web app, navigate to http://localhost:80/ using port 80.<br>
 We organized our project using the MVC (Model-View-Controller) architecture. Initially, we focused on implementing the signup, signin, and token functions to ensure everything was working properly. Then, we proceeded to work on the remaining functions. Throughout our development process, we carefully reviewed every detail we modified on the server to ensure that the React and Android behavior met our expectations. Once everything was functioning as expected, we uploaded our program.
 =======
 ## Welcome to our Facebook Server !
+
+welcome to our Fecebook server repository!  <br>
+=======
 welcome to our Fecebook server repository! <br>
 The server is designed for use with our React and Android Facebook apps, which we developed during the course. <br>
 
@@ -44,6 +47,13 @@ npm start  <br>
 right now the server is running, and the mongoDb should have the relevnt colloction with our Data based. <br>
 now in order to see the web using the port 80 in http://localhost:80/. <br>
 
+# Our Workflow 
+We organized our project using the MVC architecture. <br>
+Initially, we focused on implementing the signup, signin, and token functions to ensure everything was working properly. Then, we proceeded to work on the remaining functions. <br>
+Throughout our development process, we carefully reviewed every detail we modified on the server to ensure that the React and Android behavior met our expectations. <br>
+Once everything was functioning as expected, we uploaded our program. <br>
+
+=======
 This facebook app was developed in web envionement using HTML, css, JS, react. It's linked to the Node Js server and the TCP, so please make sure they're both running before you work on this app. <br>
 The work on this app was divided to 2 parts. In the first part we worked only on the basic functions as login screen, and sign in screen of course with all of the functionality. <br>
 We had hard coded users we could log in with and inside the main page you could scroll down and see hard coded feed from a json list of posts. <br>

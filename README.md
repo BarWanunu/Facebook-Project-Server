@@ -1,37 +1,4 @@
-![image](https://github.com/shakedg1234/ex3/assets/132774208/bd994cf8-1cc7-41cb-b658-cb92ec9756f5)## Welcome to our Facebook Server!
-Welcome to our Facebook server repository! The server is designed for use with our React and Android Facebook apps, which we developed during the course.
-
-## How to Run the Server?
-To begin, clone the project from the following URL: https://github.com/shakedg1234/ex3.
-
-### Before Running
-Before running the server, please ensure the following:
-
-1. Make sure that you have MongoDB Compass installed on your computer.
-2. Ensure that the TCP server is running on your computer. You can download it from here: https://github.com/BarWanunu/Advanced-programming-project/tree/ex4_branch.
-3. Open the project in VS Code. In the env.local file, you can adjust the size and the number of hash functions you want to initialize the Bloom filter with using the BLOOM_PART_INITIALIZE variable. Additionally, you can modify the list of invalid URLs using the URL_LIST variable.
-4. To connect to the TCP server, adjust the IP address in the TCP_SERVER_IP variable. If you are running the TCP server on a virtual machine, you will need to use the machine's IP address, which you can find using the command ifconfig.
-![image](https://github.com/shakedg1234/ex3/assets/132774208/bed8ed8c-2f56-489a-8d95-e5f16ecd2ddc)
-
-   ![image](https://github.com/shakedg1234/ex3/assets/132774208/3f264bb5-9fa4-4644-817a-d9d639dd6a9d)
-
-### How to Run the Project
-To run the project, follow these steps: <br>
-
-Open a terminal and run the command:<br>
-npm install<br>
-npm install mongodb <br>
-Start the server by running:<br>
-npm start<br>
-The server is now running, and MongoDB should have the relevant collection with our database.<br>
-To view the web app, navigate to http://localhost:80/ using port 80.<br>
-## Our Workflow
-We organized our project using the MVC (Model-View-Controller) architecture. Initially, we focused on implementing the signup, signin, and token functions to ensure everything was working properly. Then, we proceeded to work on the remaining functions. Throughout our development process, we carefully reviewed every detail we modified on the server to ensure that the React and Android behavior met our expectations. Once everything was functioning as expected, we uploaded our program.
-=======
 ## Welcome to our Facebook Server !
-
-welcome to our Fecebook server repository!  <br>
-=======
 welcome to our Fecebook server repository! <br>
 The server is designed for use with our React and Android Facebook apps, which we developed during the course. <br>
 
@@ -47,13 +14,6 @@ npm start  <br>
 right now the server is running, and the mongoDb should have the relevnt colloction with our Data based. <br>
 now in order to see the web using the port 80 in http://localhost:80/. <br>
 
-# Our Workflow 
-We organized our project using the MVC architecture. <br>
-Initially, we focused on implementing the signup, signin, and token functions to ensure everything was working properly. Then, we proceeded to work on the remaining functions. <br>
-Throughout our development process, we carefully reviewed every detail we modified on the server to ensure that the React and Android behavior met our expectations. <br>
-Once everything was functioning as expected, we uploaded our program. <br>
-
-=======
 This facebook app was developed in web envionement using HTML, css, JS, react. It's linked to the Node Js server and the TCP, so please make sure they're both running before you work on this app. <br>
 The work on this app was divided to 2 parts. In the first part we worked only on the basic functions as login screen, and sign in screen of course with all of the functionality. <br>
 We had hard coded users we could log in with and inside the main page you could scroll down and see hard coded feed from a json list of posts. <br>
